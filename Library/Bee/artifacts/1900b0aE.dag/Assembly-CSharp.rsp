@@ -355,6 +355,7 @@
 "Assets/Scripts/EnemyMovement.cs"
 "Assets/Scripts/FollowPlayer.cs"
 "Assets/Scripts/PlayerController.cs"
+"Assets/Scripts/UnityInformations.cs"
 -langversion:9.0
 
 /deterministic
