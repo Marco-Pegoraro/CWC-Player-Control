@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    private float speed = 20;
+    [SerializeField] float speed = 20;
+
+    private int playerVelocity;
 
     private float turnSpeed = 35;
 
@@ -12,19 +15,57 @@ public class PlayerController : MonoBehaviour
 
     private float forwardInput;
 
-    // Start is called before the first frame update
+    private Rigidbody playerRb;
+
+    [SerializeField] GameObject centerMass;
+
+    [SerializeField] TextMeshProUGUI speedometerText;
+
+    [SerializeField] List<WheelCollider> allWheels;
+
+    private int wheelsOnGround;
+
     void Start()
     {
-        
+        playerRb = GetComponent<Rigidbody>();
+
+
+        playerRb.centerOfMass = centerMass.transform.position;
     }
 
-    // Update is called once per frames
-    void Update()
+
+    void FixedUpdate()
     {
         horizontalInput = Input.GetAxis("Horizontal");
         forwardInput = Input.GetAxis("Vertical");
 
-        transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
-        transform.Rotate(Vector3.up, turnSpeed * Time.deltaTime * horizontalInput);
+        if(IsOnGround())
+        {
+            playerRb.AddRelativeForce(Vector3.forward * forwardInput * speed);
+            transform.Rotate(Vector3.up, turnSpeed * Time.deltaTime * horizontalInput);
+
+            playerVelocity = Mathf.RoundToInt(playerRb.velocity.magnitude);
+            speedometerText.text = "Speed: " + playerVelocity + " KMH";
+        }
     }
+
+    bool IsOnGround()
+    {
+        wheelsOnGround = 0;
+        foreach(WheelCollider wheel in allWheels)
+        {
+            if(wheel.isGrounded)
+            {
+                wheelsOnGround++;
+            }
+        }
+        if(wheelsOnGround == 4)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }   
 }
